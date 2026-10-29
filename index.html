@@ -43,7 +43,11 @@
       --max-ar: 1.6;           /* màn hình KHÔNG rộng hơn tỉ lệ này (1.6 = 16:10). Trình duyệt rộng hơn thì hai bên để màu nâu tối. Giảm (vd 1.3) = ảnh ít bị cắt/ít phóng to hơn; đặt 99 = luôn phủ kín trình duyệt */
       --bg-pos: 30% 80%;       /* phần ảnh được giữ lại khi cắt: 50% 0% = giữ phần trên, 50% 100% = giữ phần dưới */
     }
-    body { background: #9bc9ec; -webkit-tap-highlight-color: transparent; }
+    body {
+  background: #a8998b url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjh6Lper3WUWCHWwB33IgOTEfaK_CP7kJcqxGS1f8LG-6WWJzsjI0Gr0DH2U9DtkpLyN24p2PJ59DwJ1TI6ZbtPj4Ul5A_K6O_korhGCCqBjhK3AqN5JRLFbvIEygG2k93Ee_WVGZA6c1L8vjJpXoDN5zH0lHRhSHLBIMoRoekcMwcNij2s3lLD4tbgjyQ/s1600/%E2%9D%A6.jpeg") repeat;
+  background-size: 300px auto;
+  -webkit-tap-highlight-color: transparent;
+}
     .monitor { position: fixed; inset: 0; margin: auto; overflow: hidden; background: #1b1a12;
       width: 100vw; height: 100vh; max-width: calc(100vh * var(--max-ar));
       container-type: size; transform: translateZ(0);
