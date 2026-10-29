@@ -72,7 +72,7 @@
     .icon:focus { outline: none; }
 
     /* ---------- cửa sổ ---------- */
-    .win { position: fixed; display: none; flex-direction: column; width: min(600px, calc(100cqw - 230px)); height: min(430px, calc(100cqh - var(--bar) - 70px)); background: var(--body); border: 4px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); box-shadow: 7px 7px 0 var(--ink); }
+    .win { position: fixed; display: none; flex-direction: column; width: min(600px, calc(100cqw - 230px)); height: min(430px, calc(100cqh - var(--bar) - 70px)); background: var(--body); border: 2px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); box-shadow: none; }
     .win.open { display: flex; }
     .win.min { display: none; }
     .win.max { inset: 0 0 var(--bar) 0 !important; width: auto; height: auto; box-shadow: none; }
@@ -99,14 +99,14 @@
     /* lưới bìa */
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 18px 14px; }
     .item { display: block; padding: 4px; text-align: center; color: var(--ink); text-decoration: none; cursor: pointer; }
-    .item .cover { width: 100%; max-width: 120px; aspect-ratio: 1; margin: 0 auto 6px; display: grid; place-items: center; background: var(--body); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); overflow: hidden; }
+    .item .cover { width: 100%; max-width: 120px; aspect-ratio: 1; margin: 0 auto 6px; display: grid; place-items: center; background: var(--body); border: 3px solid var(--ink); box-shadow: none; overflow: hidden; }
     .item .cover img { width: 100%; height: 100%; object-fit: cover; image-rendering: auto; display: block; }
     .item .cover.poster { aspect-ratio: 2/3; }
     .item .cover b { font: 600 34px var(--px); color: var(--hi); }
     .item span { display: inline-block; max-width: 100%; padding: 0 4px; font-size: 21px; line-height: 1.05; overflow-wrap: break-word; }
     .item:hover span, .item:focus-visible span { background: var(--olive); color: var(--lcd); }
     .item:focus { outline: none; }
-    .item:hover .cover, .item:focus-visible .cover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
+    .item:hover .cover, .item:focus-visible .cover { transform: translate(-1px,-1px); box-shadow: none; }
     .empty { grid-column: 1 / -1; padding: 30px 10px; text-align: center; color: var(--soft); font-size: 24px; }
 
     /* ---------- taskbar ---------- */
@@ -146,7 +146,7 @@
       .bg-photo { background-position: 50% 40%; }
       .icon[data-open="music"] { left: 6%; top: 8%; }
       .icon[data-open="film"]  { left: 30%; top: 17%; }
-      .win, .win.max { inset: 10px 14px calc(var(--bar) + 14px) 10px !important; width: auto; height: auto; box-shadow: 5px 5px 0 var(--ink); border-width: 3px; }
+      .win, .win.max { inset: 10px 14px calc(var(--bar) + 14px) 10px !important; width: auto; height: auto; box-shadow: none; border-width: 3px; }
       .titlebar { cursor: default; }
       .tb[data-act="max"] { display: none; }
       .task { flex: 1 1 0; min-width: 0; }
