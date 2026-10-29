@@ -7,7 +7,8 @@
   <meta name="description" content="A retro desktop for favorite songs and films." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=VT323&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=VT323&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=VT323&display=swap" rel="stylesheet" /></noscript>
 
   <style>
     :root {
@@ -131,6 +132,9 @@
     .screen { position: fixed; inset: 0; z-index: 10000; background: #000; color: #e8c07a; display: grid; place-items: center; text-align: center; font-size: 30px; line-height: 1.3; padding: 20px; }
     .screen.hide { display: none; }
     .screen.fade { opacity: 0; transition: opacity .5s steps(5); pointer-events: none; }
+    /* boot tự tắt bằng CSS thuần, không phụ thuộc JavaScript hay font */
+    #boot { animation: bootout .4s steps(4) .7s forwards; }
+    @keyframes bootout { to { opacity: 0; visibility: hidden; pointer-events: none; } }
     .blink { animation: blink 1s steps(2) infinite; }
     @keyframes blink { 50% { opacity: 0; } }
     @media (prefers-reduced-motion: reduce) { .blink { animation: none; } .screen.fade { transition: none; } }
@@ -247,21 +251,20 @@
         cover: "https://blogger.googleusercontent.com/img/a/AVvXsEidcs9tpRSF9P0VDS0qtIVe6WvIqw6SdyhDY-MoJqAjuEugoaGvF-SWjGYrltYoUQZfxwGcSJ9u2n9_zD65UneVgqg1ZdczAOHnVLOd4G-xro9LXy22ZXO80-ZlscWSuTpb5uqrKxf9EZGmVNMw7rZU_Pb7k1ZsrZBJjZEPn1thE31C80o6h1zeefqunQI" }
     ];
 
-
-     var FILMS = [
-  { title: "moonlit winter", poster: https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg4souDQtWerdEwzGYypXt5JL4wRRzS_H6sR5fFl1fZhLfOMT2qx9mmfSltYdOD8Z26aFxtX_leZRVZWHghyphenhypheniVsYaV0K9UI3En7kfjKPWQVXAwXBRt3543GP83XQpigVdfO3fEl-8vALcSxsCHotGE0YF6PwQpZVdXSbQAAQT3KnvwOLk1xO95d_I2rbBM/s1600/Moonlit%20Winter%20%282019%29.jpeg" },
-  { title: "happy together", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgCdUNXXoBlCueIlGEGm4J8XJunuOHZtLZV1ltOGpIzmFSEOdHqG8GzX1e9419Qy4E5FCw9BLb4_4kzlZxr4tMyf4j05qe0FkdlBKmYeBAVAdDPy0FnlCe31IT6C3NEiPGRnsMxOKe4nAfpRIE68CeVeT5mXW9MOgXvSDvSmLD-8exWuXto1-pTibA6UaI/s1600/_%20%2893%29.jpeg" },
-  { title: "the portrait of a lady on fire", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgrkGIjNMhHMw_oN8X2v24ZVPuynBSqfsFAummVromcH9_h4PV4xwAmVAQJTipBOPVepDYwrkD1_97c4iyQX2W8NH4OrWvmcZKUMVoJr6vDlefCSaCwboEJLDw6dKi9iccWz-80oiSzs2NSRqkdlwyUbpHsDZG66i4DapXIJ1MT5Tn_mVNkVZ9xXqTH0eo/s1600/portrait%20of%20a%20lady%20on%20fire%20%282019%29.jpeg" },
-  { title: "eternal sunshine of the spotless mind", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjtiMIKZ2Ya5Wl7ynq-cRtJuzg12KqlYU6hUjwg_7nr4hAOmcH8t6GhDnXFWzfEnth6i-Gdf-5VJtK3p-IYzRc-9seZ0PwlhKSONnKU3BseW94gks9wniT2rDHnRZbI1vQM32ia7Kdfmg7-qjh3KL_wra4f6FV17O-XHbnHLJiEt5xqRwwCYAm0k-sMPjA/s1600/Eternal%20Sunshine%20of%20the%20Spotless%20Mind.jpeg" },
-  { title: "violet evergarden", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhN1kXgGQMspHhODBk0ZY2EIquzyPLOncnEVK1X5ZKBjb3MswerbpP9AzRh_9MxOp1B-UZm-_lUrZstQFo231r-XUcqknWql_enUi2KMoRB-SNbIrhTHkCF3haTA02XNjyYdiL8yQtKhFZY1byj6yVkTK5bY3upoZTprsxzKoaJwBVaPkYxggI3qjuz6gI/s1600/Violet%20Evergarden.jpeg" },
-  { title: "k-on", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh4SRoGPPMDG9V80KaHafBFczTs29-ZN1117gAfdfvjGR4o39gWtK7kqDmbz-c1pgAfLxRAAwnvJNxD82b2-vrg9xfja6GFvuXef59KNCEauOgvA1qh9ucWaf86qsif-GHgc4OSv9mTmn6zTRErASDSE16x2RL-wUBGoqS6F5xa4cOv4IfqmdLC9XXdvLk/s1600/K%20on.jpeg" },
-  { title: "maquia: chờ ngày lời hứa nở hoa", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIploW2k1TL-nVn7dXnkJbfT-Jmzp-BEYfw3acR89KNMYkD-rBRNmCk_Cg0LS-QxC_p2X32MkGGH_Ov5YxjPk_-8A8ayxBEfWBkhQv8QgmLh3ihvZS6oTYm99N0pvmtZJmOfc7X__ech7AKNleCsu-Xu0mlhfzKXczZNsf7P4wAMXNgiLOmbcHb7BBKeU/s1600/Sitges%202018_%20%E2%80%98Maquia_%20When%20The%20Promised%20Flower%20Blooms%E2%80%99.jpeg" },
-  { title: "nana", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIko57tv-jFdbZuhoJC7GaJfCs_8_Q-WUkG4cTLtvfLQSl7rDT3r2Rtu1CcBS2y65MoyAp-T8eKkrBLYb_60MXBSPALeLM3vmG4b7oCXMQAFt1bGz__BVgNJT937-9Ip9BFu_FztUO0pUHypMOKOyDFm5-HQ-jzVmPpk4rOSCbg7IFl_vhayFKIXq-xxQ/s1600/_%20%2896%29.jpeg" },
-  { title: "mob psycho 100", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEggXiq6XaIf1xXdb3A9OmqTmQDtVvS9bJGxwDKlbT6A0TfoMFJoF7PHauWBw5DX-0Arc-VNkdr1Hu4G5t71muFzwdxQfZ9StbBMzYmmisi8pixnZcngWvY-BviHgtCnEtW4yBKaEWsmF7qF31bw8ZT4PC-IYkAjLlysn6QW2GqVArkWINnbXgxkrKe52eQ/s1600/_%20%2897%29.jpeg" },
-  { title: "perfect days", year: 2023, poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMj8BKq3h5Bmztj39B1ShF5VTXi3eMLg4M-IR8YNGygBPW5SjUW6KOcd0rwEDQEjm9cpn0cmPzm3vAlzbhl52BIkl_ceE2Rj1H8liLxytBBFzzQdQShykqWP0Zc8kKo847CftUsDyXwV4omkZq3Y9tEh6lrj4mgey2GJTysLKLMVSYkaBmpUPSWVYv5IY/s1600/PERFECT%20DAYS%20%282023%29%20poster%20design%20by%20Gokaiju.jpeg" },
-  { title: "robot dreams", year: 2023, poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_AgVMbi320e4n6qm08bD27KqaHkGWWhyphenhyphenC1acvHst8OR4fRD0pUTqEtaJ-h6wcIslrKxgT0dtSurgldZYgJShddUkv1W6Nm__eBqniPdB1-emJ0DzBI7s_lBD5NVm6aivToGeg9ShPSQ921Paslp3_l7iq4SpnCCHFLCqqH3xQtCNN6-1PPy5zEZRT2A8/s1600/_%20%2898%29.jpeg" },
-  { title: "honey and clover", year: 2006, poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhxpUFiLxTldyhNd7Og6KMAd3moUT2f6ABUMDQb3y_ESGtNziTneaoA-ubmHw04dpkpzWfHffcHg6k8iAcEcRacP632Vrtql_e6FpeWcmbZcBvzO-L_YJUFBDJwBTLiYqxlPhrdCKVQLbuDn5zIh-TOAQD5jZBqWrFrr-wEgoB-j-gjii9FlAyIK-NmqUk/s1600/_%20%2899%29.jpeg" }
-];
+    var FILMS = [
+      { title: "moonlit winter", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg4souDQtWerdEwzGYypXt5JL4wRRzS_H6sR5fFl1fZhLfOMT2qx9mmfSltYdOD8Z26aFxtX_leZRVZWHghyphenhypheniVsYaV0K9UI3En7kfjKPWQVXAwXBRt3543GP83XQpigVdfO3fEl-8vALcSxsCHotGE0YF6PwQpZVdXSbQAAQT3KnvwOLk1xO95d_I2rbBM/s1600/Moonlit%20Winter%20%282019%29.jpeg" },
+      { title: "happy together", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgCdUNXXoBlCueIlGEGm4J8XJunuOHZtLZV1ltOGpIzmFSEOdHqG8GzX1e9419Qy4E5FCw9BLb4_4kzlZxr4tMyf4j05qe0FkdlBKmYeBAVAdDPy0FnlCe31IT6C3NEiPGRnsMxOKe4nAfpRIE68CeVeT5mXW9MOgXvSDvSmLD-8exWuXto1-pTibA6UaI/s1600/_%20%2893%29.jpeg" },
+      { title: "the portrait of a lady on fire", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgrkGIjNMhHMw_oN8X2v24ZVPuynBSqfsFAummVromcH9_h4PV4xwAmVAQJTipBOPVepDYwrkD1_97c4iyQX2W8NH4OrWvmcZKUMVoJr6vDlefCSaCwboEJLDw6dKi9iccWz-80oiSzs2NSRqkdlwyUbpHsDZG66i4DapXIJ1MT5Tn_mVNkVZ9xXqTH0eo/s1600/portrait%20of%20a%20lady%20on%20fire%20%282019%29.jpeg" },
+      { title: "eternal sunshine of the spotless mind", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjtiMIKZ2Ya5Wl7ynq-cRtJuzg12KqlYU6hUjwg_7nr4hAOmcH8t6GhDnXFWzfEnth6i-Gdf-5VJtK3p-IYzRc-9seZ0PwlhKSONnKU3BseW94gks9wniT2rDHnRZbI1vQM32ia7Kdfmg7-qjh3KL_wra4f6FV17O-XHbnHLJiEt5xqRwwCYAm0k-sMPjA/s1600/Eternal%20Sunshine%20of%20the%20Spotless%20Mind.jpeg" },
+      { title: "violet evergarden", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhN1kXgGQMspHhODBk0ZY2EIquzyPLOncnEVK1X5ZKBjb3MswerbpP9AzRh_9MxOp1B-UZm-_lUrZstQFo231r-XUcqknWql_enUi2KMoRB-SNbIrhTHkCF3haTA02XNjyYdiL8yQtKhFZY1byj6yVkTK5bY3upoZTprsxzKoaJwBVaPkYxggI3qjuz6gI/s1600/Violet%20Evergarden.jpeg" },
+      { title: "k-on", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh4SRoGPPMDG9V80KaHafBFczTs29-ZN1117gAfdfvjGR4o39gWtK7kqDmbz-c1pgAfLxRAAwnvJNxD82b2-vrg9xfja6GFvuXef59KNCEauOgvA1qh9ucWaf86qsif-GHgc4OSv9mTmn6zTRErASDSE16x2RL-wUBGoqS6F5xa4cOv4IfqmdLC9XXdvLk/s1600/K%20on.jpeg" },
+      { title: "maquia: chờ ngày lời hứa nở hoa", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIploW2k1TL-nVn7dXnkJbfT-Jmzp-BEYfw3acR89KNMYkD-rBRNmCk_Cg0LS-QxC_p2X32MkGGH_Ov5YxjPk_-8A8ayxBEfWBkhQv8QgmLh3ihvZS6oTYm99N0pvmtZJmOfc7X__ech7AKNleCsu-Xu0mlhfzKXczZNsf7P4wAMXNgiLOmbcHb7BBKeU/s1600/Sitges%202018_%20%E2%80%98Maquia_%20When%20The%20Promised%20Flower%20Blooms%E2%80%99.jpeg" },
+      { title: "nana", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIko57tv-jFdbZuhoJC7GaJfCs_8_Q-WUkG4cTLtvfLQSl7rDT3r2Rtu1CcBS2y65MoyAp-T8eKkrBLYb_60MXBSPALeLM3vmG4b7oCXMQAFt1bGz__BVgNJT937-9Ip9BFu_FztUO0pUHypMOKOyDFm5-HQ-jzVmPpk4rOSCbg7IFl_vhayFKIXq-xxQ/s1600/_%20%2896%29.jpeg" },
+      { title: "mob psycho 100", poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEggXiq6XaIf1xXdb3A9OmqTmQDtVvS9bJGxwDKlbT6A0TfoMFJoF7PHauWBw5DX-0Arc-VNkdr1Hu4G5t71muFzwdxQfZ9StbBMzYmmisi8pixnZcngWvY-BviHgtCnEtW4yBKaEWsmF7qF31bw8ZT4PC-IYkAjLlysn6QW2GqVArkWINnbXgxkrKe52eQ/s1600/_%20%2897%29.jpeg" },
+      { title: "perfect days", year: 2023, poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMj8BKq3h5Bmztj39B1ShF5VTXi3eMLg4M-IR8YNGygBPW5SjUW6KOcd0rwEDQEjm9cpn0cmPzm3vAlzbhl52BIkl_ceE2Rj1H8liLxytBBFzzQdQShykqWP0Zc8kKo847CftUsDyXwV4omkZq3Y9tEh6lrj4mgey2GJTysLKLMVSYkaBmpUPSWVYv5IY/s1600/PERFECT%20DAYS%20%282023%29%20poster%20design%20by%20Gokaiju.jpeg" },
+      { title: "robot dreams", year: 2023, poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_AgVMbi320e4n6qm08bD27KqaHkGWWhyphenhyphenC1acvHst8OR4fRD0pUTqEtaJ-h6wcIslrKxgT0dtSurgldZYgJShddUkv1W6Nm__eBqniPdB1-emJ0DzBI7s_lBD5NVm6aivToGeg9ShPSQ921Paslp3_l7iq4SpnCCHFLCqqH3xQtCNN6-1PPy5zEZRT2A8/s1600/_%20%2898%29.jpeg" },
+      { title: "honey and clover", year: 2006, poster: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhxpUFiLxTldyhNd7Og6KMAd3moUT2f6ABUMDQb3y_ESGtNziTneaoA-ubmHw04dpkpzWfHffcHg6k8iAcEcRacP632Vrtql_e6FpeWcmbZcBvzO-L_YJUFBDJwBTLiYqxlPhrdCKVQLbuDn5zIh-TOAQD5jZBqWrFrr-wEgoB-j-gjii9FlAyIK-NmqUk/s1600/_%20%2899%29.jpeg" }
+    ];
 
     /* ================= RENDER ================= */
     function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
