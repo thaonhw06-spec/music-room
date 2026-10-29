@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cassie Loveletters | Music Room</title>
+  <meta name="description" content="A retro desktop for favorite songs and films." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=VT323&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --body: #a8998b;       /* thân cửa sổ, nút */
+      --title: #9bc9ec;      /* thanh tiêu đề */
+      --title-ink: #35537b;  /* chữ tiêu đề */
+      --lcd: #fcffbc;        /* ô hiển thị */
+      --hi: #dfdfdf;         /* viền sáng */
+      --ink: #000;
+      --soft: #7b6a5d;       /* chữ phụ */
+      --olive: #736d34;
+      --olive-deep: #4f4b26;
+      --panel: #ddd3c8;      /* nền vùng nội dung */
+      --lilac: #d9c3ec;
+      --bar: 40px;
+      --px: "Pixelify Sans", "VT323", monospace;
+      --lcdfont: "VT323", monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    body {
+      font-family: var(--lcdfont);
+      font-size: 20px;
+      color: var(--ink);
+      background: #1b1a12;
+      -webkit-user-select: none; user-select: none;
+    }
+    /* ===== "màn hình" giới hạn độ rộng ở giữa trang, ảnh nền vừa khít, không mờ ===== */
+    :root {
+      --bg-url: url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjHAaN1Se-X_9Eb7YBwC4qvXT-YgSai_730Ks2SDgF2YvpMNJE99v7_AGVOrsTuDK82P7HgziHnjUIUUe9QxqSOpXD5USxgKMYCHWowy5_Q0bFkvS59-918G6UUqpXhDId1oIfhd533GRrE2bTK14rgLKL3PMdbBxScMxduFvlb5AGYya3jMh_EDGChnlg/s1600/IMG_8587%20Large.png");
+      --max-ar: 1.6;           /* màn hình KHÔNG rộng hơn tỉ lệ này (1.6 = 16:10). Trình duyệt rộng hơn thì hai bên để màu nâu tối. Giảm (vd 1.3) = ảnh ít bị cắt/ít phóng to hơn; đặt 99 = luôn phủ kín trình duyệt */
+      --bg-pos: 50% 30%;       /* phần ảnh được giữ lại khi cắt: 50% 0% = giữ phần trên, 50% 100% = giữ phần dưới */
+    }
+    body { background: #231f14; -webkit-tap-highlight-color: transparent; }
+    .monitor { position: fixed; inset: 0; margin: auto; overflow: hidden; background: #1b1a12;
+      width: 100vw; height: 100vh; max-width: calc(100vh * var(--max-ar));
+      container-type: size; transform: translateZ(0);
+      box-shadow: 0 0 0 4px #000, 0 16px 60px rgba(0,0,0,.6); }
+    @supports (height: 100dvh) { .monitor { height: 100dvh; max-width: calc(100dvh * var(--max-ar)); } }
+    .bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: #1b1a12; }
+    .bg-photo { position: absolute; inset: 0; background: var(--bg-url) var(--bg-pos) / cover no-repeat; }
+    /* lớp tối nhẹ để chữ icon luôn đọc được */
+    .bg::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.16); }
+    img { image-rendering: pixelated; }
+    button { font: inherit; color: inherit; }
+
+    /* ---------- bevel dùng chung ---------- */
+    .raised { background: var(--body); border: 3px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); }
+    .sunken { border: 3px solid; border-color: var(--ink) var(--hi) var(--hi) var(--ink); }
+
+    /* ---------- desktop icons ---------- */
+    .desktop { position: fixed; inset: 0 0 var(--bar) 0; }
+    /* icon đặt lệch nhau một chút cho đỡ gọn gàng: chỉnh left/top ở đây */
+    .icon { position: absolute; width: 92px; padding: 6px 4px; background: none; border: 0; cursor: pointer; text-align: center; color: #fff; }
+    .icon[data-open="music"] { left: 3.5%; top: 9%; }
+    .icon[data-open="film"]  { left: 9.5%; top: 31%; }
+    .icon img { width: 64px; height: 64px; display: block; margin: 0 auto 6px; }
+    .icon span { display: inline-block; max-width: 100%; padding: 0 4px; font-size: 22px; line-height: 1.05; text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000; }
+    .icon.sel span, .icon:focus-visible span { background: var(--olive); outline: 1px dotted var(--lcd); text-shadow: none; }
+    .icon.sel img, .icon:focus-visible img { filter: sepia(1) saturate(2) hue-rotate(20deg) brightness(.8); }
+    .icon:focus { outline: none; }
+
+    /* ---------- cửa sổ ---------- */
+    .win { position: fixed; display: none; flex-direction: column; width: min(600px, calc(100cqw - 230px)); height: min(430px, calc(100cqh - var(--bar) - 70px)); background: var(--body); border: 4px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); box-shadow: 7px 7px 0 var(--ink); }
+    .win.open { display: flex; }
+    .win.min { display: none; }
+    .win.max { inset: 0 0 var(--bar) 0 !important; width: auto; height: auto; box-shadow: none; }
+    .titlebar { display: flex; align-items: center; gap: 10px; height: 46px; margin: 6px; padding: 0 6px 0 8px; background: var(--title); color: var(--title-ink); cursor: grab; touch-action: none; }
+    .titlebar:active { cursor: grabbing; }
+    .titlebar img { width: 28px; height: 28px; flex: none; }
+    .titlebar h2 { flex: 1; margin: 0; font: 600 25px/1 var(--px); letter-spacing: .02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .win:not(.active) .titlebar { filter: saturate(.55) brightness(1.04); }
+    .tb { width: 32px; height: 30px; padding: 0; display: grid; place-items: center; cursor: pointer; background: var(--body); border: 3px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); box-shadow: 2px 2px 0 var(--ink); }
+    .tb:active { border-color: var(--ink) var(--hi) var(--hi) var(--ink); box-shadow: none; transform: translate(2px,2px); }
+    .tb svg { width: 14px; height: 14px; shape-rendering: crispEdges; }
+
+    .addr { display: flex; gap: 8px; margin: 0 6px 6px; }
+    .lcd { flex: 1; min-width: 0; padding: 2px 10px; background: var(--lcd); color: var(--title-ink); font-size: 24px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 3px solid; border-color: var(--ink) var(--hi) var(--hi) var(--ink); }
+    .btn { padding: 0 14px; background: var(--body); border: 3px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); cursor: pointer; font-size: 22px; text-decoration: none; display: inline-flex; align-items: center; color: var(--ink); }
+    .btn:active { border-color: var(--ink) var(--hi) var(--hi) var(--ink); }
+
+    .content { flex: 1; min-height: 0; margin: 0 6px; padding: 14px; overflow: auto; background: var(--panel); border: 3px solid; border-color: var(--ink) var(--hi) var(--hi) var(--ink); -webkit-user-select: text; user-select: text; scrollbar-color: var(--body) var(--panel); }
+    .content::-webkit-scrollbar { width: 18px; height: 18px; }
+    .content::-webkit-scrollbar-track { background: var(--panel); border-left: 2px solid var(--ink); }
+    .content::-webkit-scrollbar-thumb { background: var(--body); border: 3px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); }
+    .status { margin: 6px; padding: 2px 10px; background: var(--lcd); color: var(--title-ink); font-size: 22px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 3px solid; border-color: var(--ink) var(--hi) var(--hi) var(--ink); }
+
+    /* lưới bìa */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 18px 14px; }
+    .item { display: block; padding: 4px; text-align: center; color: var(--ink); text-decoration: none; cursor: pointer; }
+    .item .cover { width: 100%; max-width: 120px; aspect-ratio: 1; margin: 0 auto 6px; display: grid; place-items: center; background: var(--body); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); overflow: hidden; }
+    .item .cover img { width: 100%; height: 100%; object-fit: cover; image-rendering: auto; display: block; }
+    .item .cover.poster { aspect-ratio: 2/3; }
+    .item .cover b { font: 600 34px var(--px); color: var(--hi); }
+    .item span { display: inline-block; max-width: 100%; padding: 0 4px; font-size: 21px; line-height: 1.05; overflow-wrap: break-word; }
+    .item:hover span, .item:focus-visible span { background: var(--olive); color: var(--lcd); }
+    .item:focus { outline: none; }
+    .item:hover .cover, .item:focus-visible .cover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
+    .empty { grid-column: 1 / -1; padding: 30px 10px; text-align: center; color: var(--soft); font-size: 24px; }
+
+    /* ---------- taskbar ---------- */
+    .taskbar { position: fixed; left: 0; right: 0; bottom: 0; height: var(--bar); display: flex; align-items: center; gap: 6px; padding: 4px 6px; background: var(--body); border-top: 3px solid var(--hi); box-shadow: 0 -3px 0 var(--ink); z-index: 9000; }
+    .start { display: inline-flex; align-items: center; gap: 8px; height: 100%; padding: 0 12px 0 8px; background: var(--body); border: 3px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); cursor: pointer; font: 600 20px var(--px); }
+    .start img { width: 22px; height: 22px; }
+    .start.on, .start:active { border-color: var(--ink) var(--hi) var(--hi) var(--ink); }
+    .tasks { display: flex; gap: 6px; flex: 1; min-width: 0; height: 100%; }
+    .task { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 190px; flex: 0 1 190px; height: 100%; padding: 0 10px; background: var(--body); border: 3px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); cursor: pointer; font-size: 21px; }
+    .task img { width: 20px; height: 20px; flex: none; }
+    .task span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .task.on { border-color: var(--ink) var(--hi) var(--hi) var(--ink); background: #b9ab9d; }
+    .clock { height: 100%; padding: 0 12px; display: flex; align-items: center; background: var(--lcd); color: var(--title-ink); font-size: 22px; border: 3px solid; border-color: var(--ink) var(--hi) var(--hi) var(--ink); white-space: nowrap; }
+
+    .menu { position: fixed; left: 6px; bottom: var(--bar); display: none; min-width: 230px; padding: 4px; background: var(--body); border: 4px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); box-shadow: 6px 6px 0 var(--ink); z-index: 9500; }
+    .menu.open { display: block; }
+    .menu a, .menu button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 6px 10px; background: none; border: 0; text-align: left; cursor: pointer; color: var(--ink); text-decoration: none; font-size: 24px; }
+    .menu a:hover, .menu button:hover, .menu a:focus-visible, .menu button:focus-visible { background: var(--olive); color: var(--lcd); outline: none; }
+    .menu img { width: 28px; height: 28px; }
+    .menu hr { margin: 4px 2px; border: 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--hi); }
+
+    /* ---------- boot / shutdown ---------- */
+    .screen { position: fixed; inset: 0; z-index: 10000; background: #000; color: #e8c07a; display: grid; place-items: center; text-align: center; font-size: 30px; line-height: 1.3; padding: 20px; }
+    .screen.hide { display: none; }
+    .screen.fade { opacity: 0; transition: opacity .5s steps(5); pointer-events: none; }
+    .blink { animation: blink 1s steps(2) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .blink { animation: none; } .screen.fade { transition: none; } }
+
+    /* ---------- điện thoại ---------- */
+    @media (max-width: 720px) {
+      body { font-size: 19px; }
+      .monitor { max-width: none; box-shadow: none; }
+      .bg-photo { background-position: 50% 40%; }
+      .icon[data-open="music"] { left: 6%; top: 8%; }
+      .icon[data-open="film"]  { left: 30%; top: 17%; }
+      .win, .win.max { inset: 10px 14px calc(var(--bar) + 14px) 10px !important; width: auto; height: auto; box-shadow: 5px 5px 0 var(--ink); border-width: 3px; }
+      .titlebar { cursor: default; }
+      .tb[data-act="max"] { display: none; }
+      .task { flex: 1 1 0; min-width: 0; }
+      .clock { padding: 0 8px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 16px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="monitor" id="monitor">
+  <div class="bg" aria-hidden="true"><div class="bg-photo"></div></div>
+
+  <!-- icon trên desktop -->
+  <nav class="desktop" aria-label="Desktop">
+    <button class="icon" data-open="music" type="button"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" /><span>music</span></button>
+    <button class="icon" data-open="film" type="button"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" /><span>films</span></button>
+  </nav>
+
+  <!-- cửa sổ nhạc -->
+  <section class="win" id="win-music" data-title="music_files" data-icon="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" aria-label="music_files" style="left:24%; top:6%;">
+    <div class="titlebar">
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" />
+      <h2>music_files</h2>
+      <button class="tb" data-act="min" aria-label="Minimize"><svg viewBox="0 0 14 14"><rect x="1" y="10" width="9" height="3" fill="#000"/></svg></button>
+      <button class="tb" data-act="max" aria-label="Maximize"><svg viewBox="0 0 14 14"><path d="M1 1h12v12H1z M3 4h8v7H3z" fill="#000" fill-rule="evenodd"/></svg></button>
+      <button class="tb" data-act="close" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M1 1h3v2h2v2h2V3h2V1h3v3h-2v2h-2v2h2v2h2v3h-3v-2h-2v-2H6v2H4v2H1v-3h2v-2h2V6H3V4H1z" fill="#000"/></svg></button>
+    </div>
+    <div class="addr"><div class="lcd">C:\favorite_songs</div></div>
+    <div class="content">
+      <div class="grid" id="grid-music"></div>
+    </div>
+    <div class="status" id="status-music">13 object(s)</div>
+  </section>
+
+  <!-- cửa sổ phim -->
+  <section class="win" id="win-film" data-title="film_files" data-icon="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" aria-label="film_files" style="left:30%; top:15%;">
+    <div class="titlebar">
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" />
+      <h2>film_files</h2>
+      <button class="tb" data-act="min" aria-label="Minimize"><svg viewBox="0 0 14 14"><rect x="1" y="10" width="9" height="3" fill="#000"/></svg></button>
+      <button class="tb" data-act="max" aria-label="Maximize"><svg viewBox="0 0 14 14"><path d="M1 1h12v12H1z M3 4h8v7H3z" fill="#000" fill-rule="evenodd"/></svg></button>
+      <button class="tb" data-act="close" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M1 1h3v2h2v2h2V3h2V1h3v3h-2v2h-2v2h2v2h2v3h-3v-2h-2v-2H6v2H4v2H1v-3h2v-2h2V6H3V4H1z" fill="#000"/></svg></button>
+    </div>
+    <div class="addr"><div class="lcd">C:\favorite_films</div></div>
+    <div class="content"><div class="grid" id="grid-film"></div></div>
+    <div class="status" id="status-film">0 object(s)</div>
+  </section>
+
+  <!-- start menu -->
+  <div class="menu" id="menu" role="menu">
+    <button data-open="music" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" />music_files</button>
+    <button data-open="film" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" />film_files</button>
+    <hr />
+    <a href="https://cassie-loveletters.blogspot.com/" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" style="filter:grayscale(1)" />return to blog</a>
+    <button id="shutdown" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" style="filter:grayscale(1) brightness(.6)" />shut down...</button>
+  </div>
+
+  <!-- taskbar -->
+  <footer class="taskbar">
+    <button class="start" id="start" type="button" aria-haspopup="true"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" />start</button>
+    <div class="tasks" id="tasks"></div>
+    <div class="clock" id="clock">--:--</div>
+  </footer>
+
+  </div><!-- /monitor -->
+
+  <div class="screen" id="boot"><div>starting up<span class="blink">_</span></div></div>
+  <div class="screen hide" id="off"><div>it's now safe to turn off<br />your computer.<br /><br /><span class="blink" style="font-size:22px">(click anywhere to wake)</span></div></div>
+
+  <script>
+    /* ================= DỮ LIỆU =================
+       Thêm bài/phim mới chỉ cần thêm một dòng vào đây.
+       - MUSIC: cover (link ảnh bìa), title, artist, q (từ khóa tìm trên Spotify)
+       - FILMS: poster (link ảnh), title, year, link (tuỳ chọn)                      */
+    var MUSIC = [
+      { title: "(you) on my arm", artist: "Leith Ross", q: "(You) On My Arm Leith Ross",
+        cover: "https://blogger.googleusercontent.com/img/a/AVvXsEjqNlIRC1oI9Nlf3qYsx2Hcp6FY4bN2siH7o2YG6fs5trzPWg5ZcdzG09jrGxXV3NZeRQ0naMQSq2E9VmSUMt5_CT3LOxWJyDUJlSlfdNHwsF7amDUoh8FiWEEsKbF7l_9OtUJsGtXKJXYiFkkdF4EIf4r4WleSpmttT-vpDrgskdOhiWpENYWx9sOdX8s" },
+      { title: "paranoia", artist: "The Marías", q: "Paranoia The Marias",
+        cover: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/0b/4d/b6/0b4db6bd-2d40-55a5-1714-67f5c816294d/075679659644.jpg/300x300bb.jpg" },
+      { title: "lovesongs", artist: "Beabadoobee", q: "Lovesongs Beabadoobee",
+        cover: "https://blogger.googleusercontent.com/img/a/AVvXsEi2zGh0VpGSkRSsjZonJXETM96dFHTXGcAXjERo_6FwyuUE3jEf9bc4GNRAG3GTn6_sHtcIAU6tPqvvy5ylWE3A_ZhFiQYENUHP62f8uoumu9Yx_aLQHv7o5TkPYhCl6F7vSUASCCq044azZqWgshRflYD_biiJTXWsekAm23WuO6nSU-w0zKCSTINGag8" },
+      { title: "pink in the night", artist: "Mitski", q: "Pink in the Night Mitski",
+        cover: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/04/bc/5e/04bc5edd-006a-a5d9-0f63-effb5956e44b/656605145068.jpg/300x300bb.jpg" },
+      { title: "imperfect for you", artist: "Ariana Grande", q: "Imperfect for you Ariana Grande",
+        cover: "https://blogger.googleusercontent.com/img/a/AVvXsEiA9BgP4SvKaFFbqCJ5-tQV5sQ1LqpBWw8aTvWIdagAkfdTTJW1LsXS1Fw7E9wcKd6AmwuNE2A0uZ1v7OABbiwVGg2iO7CEmJR4ZgKWvb-CvoX964DS9FqN4MeabDHuZS4QFfmKHhu8J-_rPPkdQRdj2RXao8vNJPqGoNe9ehSOX4lFzhubKpD2mO5x5JU" },
+      { title: "bags", artist: "Clairo", q: "Bags Clairo",
+        cover: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/24/54/44/2454447e-c855-e8e9-4f5c-6d791667556f/00829299184631_Cover.jpg/300x300bb.jpg" },
+      { title: "wait a minute!", artist: "WILLOW", q: "Wait a Minute WILLOW",
+        cover: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/02/b7/fd/02b7fd3e-a151-c849-5b00-423a06560ef2/15UMGIM75956.rgb.jpg/300x300bb.jpg" },
+      { title: "lover is a day", artist: "Cuco", q: "Lover Is a Day Cuco",
+        cover: "https://blogger.googleusercontent.com/img/a/AVvXsEhdGCT6BPOeMcigtTt5y7omVjg6YOSCHeYXpHWLbGgClbbLHkbV1WJtL1A3kRdHtyF6YyAWre1dN7lAoRg8V_fktBfiVOmDsOp6kzTsC3Lui2itpwkrU6OcS-PnMd7wLlVqljNuJbv4LYcvOSlJqFZou-LPusCx2SB1ydCCVDkTmHKEvb9TCvvfGGQQGJE" },
+      { title: "heya", artist: "Uchu Nekoko", q: "(Heya) Uchu Nekoko",
+        cover: "https://blogger.googleusercontent.com/img/a/AVvXsEgWlBNTqZ_43FFpnPRMMsjv_n2BArdTp8t-S1pB3klcL6iJOs3vmT-81hoI-4ajaSn95zP0twe01uUOcOp13nbxn477iPA_2JiO8Nyd_Hr_t99HwCIEflRVQB-INz4dAtQ7seK5OnQWYwtSuERdDmx_hBYm_oStcXr-0cU_EcYItTFmq1T9z0M3jPy9xV4" },
+      { title: "paul", artist: "Big Thief", q: "Paul Big Thief",
+        cover: "https://blogger.googleusercontent.com/img/a/AVvXsEjY0KZ5ugCZuWgmgh6s7bHovSX1A5xm80BP5MkqK69D3keV_QSA0jyHTN9DlIjzrIBFzo_rRHXKHuCc1VvWqY1zaWvAlzkIBZpixXSthBJ8DNnh1mprvp9DRJfIsTAyj55WwDvEeIoiwXShZzTCWxGCK17qKv-jHmjPLvCwCmdPbkg6Pgie6zMQdiqamVc" },
+      { title: "venice bitch", artist: "Lana Del Rey", q: "Venice Bitch Lana Del Rey",
+        cover: "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/c6/5f/b9/c65fb9eb-da2f-89a9-b640-2fff1fc3a660/19UMGIM61350.rgb.jpg/300x300bb.jpg" },
+      { title: "touch", artist: "Cigarettes After Sex", q: "Touch Cigarettes After Sex",
+        cover: "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/a2/1e/b4/a21eb48e-05ac-ace3-00f5-c1cb53e74e58/720841217305_Cover.jpg/300x300bb.jpg" },
+      { title: "futile devices", artist: "Sufjan Stevens", q: "Futile Devices Sufjan Stevens",
+        cover: "https://blogger.googleusercontent.com/img/a/AVvXsEidcs9tpRSF9P0VDS0qtIVe6WvIqw6SdyhDY-MoJqAjuEugoaGvF-SWjGYrltYoUQZfxwGcSJ9u2n9_zD65UneVgqg1ZdczAOHnVLOd4G-xro9LXy22ZXO80-ZlscWSuTpb5uqrKxf9EZGmVNMw7rZU_Pb7k1ZsrZBJjZEPn1thE31C80o6h1zeefqunQI" }
+    ];
+
+    var FILMS = [
+      /* ví dụ: { title: "tên phim", year: 2004, poster: "posters/phim.jpg", link: "https://letterboxd.com/..." } */
+    ];
+
+    /* ================= RENDER ================= */
+    function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+
+    function renderItem(o, kind) {
+      var a = el("a", "item");
+      var isMusic = kind === "music";
+      var url = isMusic ? "https://open.spotify.com/search/" + encodeURIComponent(o.q) : o.link;
+      if (url) { a.href = url; a.target = "_blank"; a.rel = "noreferrer"; }
+      var box = el("div", "cover" + (isMusic ? "" : " poster"));
+      var src = isMusic ? o.cover : o.poster;
+      if (src) {
+        var im = new Image(); im.src = src; im.alt = o.title + (o.artist ? " by " + o.artist : "") + " cover";
+        im.loading = "lazy"; im.referrerPolicy = "no-referrer";
+        im.onerror = function () { im.remove(); box.appendChild(el("b", "", "?")); };
+        box.appendChild(im);
+      } else { box.appendChild(el("b", "", "?")); }
+      a.appendChild(box);
+      a.appendChild(el("span", "", o.title));
+      var info = o.title + (o.artist ? " - " + o.artist : "") + (o.year ? " (" + o.year + ")" : "");
+      var st = document.getElementById("status-" + kind), base = st.textContent;
+      function on() { st.textContent = info; }
+      function off() { st.textContent = base; }
+      a.addEventListener("mouseenter", on); a.addEventListener("focus", on);
+      a.addEventListener("mouseleave", off); a.addEventListener("blur", off);
+      return a;
+    }
+    (function render() {
+      var gm = document.getElementById("grid-music"), gf = document.getElementById("grid-film");
+      document.getElementById("status-music").textContent = MUSIC.length + " object(s)";
+      document.getElementById("status-film").textContent = FILMS.length + " object(s)";
+      MUSIC.forEach(function (o) { gm.appendChild(renderItem(o, "music")); });
+      if (!FILMS.length) gf.appendChild(el("div", "empty", "this folder is empty. (thêm phim vào mảng FILMS trong index.html)"));
+      FILMS.forEach(function (o) { gf.appendChild(renderItem(o, "film")); });
+    })();
+
+
+    /* ================= CỬA SỔ ================= */
+    var wins = { music: document.getElementById("win-music"), film: document.getElementById("win-film") };
+    var tasks = document.getElementById("tasks"), z = 10, current = null;
+    var narrow = function () { return window.matchMedia("(max-width: 720px)").matches; };
+
+    function renderTasks() {
+      tasks.textContent = "";
+      Object.keys(wins).forEach(function (id) {
+        var w = wins[id]; if (!w.classList.contains("open")) return;
+        var b = el("button", "task" + (current === id && !w.classList.contains("min") ? " on" : ""));
+        var i = new Image(); i.src = w.dataset.icon; i.alt = "";
+        b.appendChild(i); b.appendChild(el("span", "", w.dataset.title));
+        b.addEventListener("click", function () {
+          if (w.classList.contains("min")) { w.classList.remove("min"); focus(id); }
+          else if (current === id) { w.classList.add("min"); current = null; renderTasks(); }
+          else focus(id);
+        });
+        tasks.appendChild(b);
+      });
+    }
+    function focus(id) {
+      current = id;
+      Object.keys(wins).forEach(function (k) { wins[k].classList.toggle("active", k === id); });
+      wins[id].style.zIndex = ++z;
+      renderTasks();
+    }
+    function openWin(id) {
+      var w = wins[id];
+      w.classList.add("open"); w.classList.remove("min");
+      if (!w.dataset.placed) { w.dataset.placed = 1; clamp(w); }
+      focus(id); closeMenu();
+    }
+    function closeWin(id) {
+      wins[id].classList.remove("open", "min", "max", "active");
+      if (current === id) current = null;
+      renderTasks();
+    }
+    var mon = document.getElementById("monitor");
+    function clamp(w) {
+      var m = mon.getBoundingClientRect(), r = w.getBoundingClientRect(), bar = 40;
+      var x = Math.max(0, Math.min(r.left - m.left, m.width - r.width));
+      var y = Math.max(0, Math.min(r.top - m.top, m.height - bar - r.height));
+      w.style.left = x + "px"; w.style.top = y + "px";
+    }
+
+    Object.keys(wins).forEach(function (id) {
+      var w = wins[id], bar = w.querySelector(".titlebar");
+      w.addEventListener("pointerdown", function () { if (current !== id) focus(id); });
+      w.querySelectorAll(".tb").forEach(function (b) {
+        b.addEventListener("pointerdown", function (e) { e.stopPropagation(); });
+        b.addEventListener("click", function () {
+          var a = b.dataset.act;
+          if (a === "close") closeWin(id);
+          if (a === "min") { w.classList.add("min"); if (current === id) current = null; renderTasks(); }
+          if (a === "max") { w.classList.toggle("max"); }
+        });
+      });
+      bar.addEventListener("dblclick", function (e) { if (!narrow() && !e.target.closest(".tb")) w.classList.toggle("max"); });
+      /* kéo cửa sổ */
+      var d = null;
+      bar.addEventListener("pointerdown", function (e) {
+        if (narrow() || w.classList.contains("max") || e.target.closest(".tb")) return;
+        var r = w.getBoundingClientRect();
+        d = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+        bar.setPointerCapture(e.pointerId);
+      });
+      bar.addEventListener("pointermove", function (e) {
+        if (!d) return;
+        var m = mon.getBoundingClientRect();
+        var x = Math.max(-w.offsetWidth + 120, Math.min(e.clientX - d.dx - m.left, m.width - 120));
+        var y = Math.max(0, Math.min(e.clientY - d.dy - m.top, m.height - 40 - 46));
+        w.style.left = x + "px"; w.style.top = y + "px";
+      });
+      var end = function () { d = null; };
+      bar.addEventListener("pointerup", end); bar.addEventListener("pointercancel", end);
+    });
+
+    /* icon desktop: bấm chọn, bấm đúp để mở (điện thoại: chạm là mở) */
+    var icons = document.querySelectorAll(".desktop .icon");
+    icons.forEach(function (ic) {
+      var id = ic.dataset.open;
+      ic.addEventListener("click", function () {
+        icons.forEach(function (o) { o.classList.remove("sel"); });
+        ic.classList.add("sel");
+        if (matchMedia("(pointer: coarse)").matches) openWin(id);
+      });
+      ic.addEventListener("dblclick", function () { openWin(id); });
+      ic.addEventListener("keydown", function (e) { if (e.key === "Enter") openWin(id); });
+    });
+    document.addEventListener("pointerdown", function (e) {
+      if (!e.target.closest(".icon")) icons.forEach(function (o) { o.classList.remove("sel"); });
+    });
+
+    /* ================= START MENU / TẮT MÁY ================= */
+    var menu = document.getElementById("menu"), start = document.getElementById("start");
+    function closeMenu() { menu.classList.remove("open"); start.classList.remove("on"); }
+    start.addEventListener("click", function (e) { e.stopPropagation(); var o = menu.classList.toggle("open"); start.classList.toggle("on", o); });
+    document.addEventListener("pointerdown", function (e) { if (!e.target.closest("#menu") && !e.target.closest("#start")) closeMenu(); });
+    menu.querySelectorAll("[data-open]").forEach(function (b) { b.addEventListener("click", function () { openWin(b.dataset.open); }); });
+    var off = document.getElementById("off");
+    document.getElementById("shutdown").addEventListener("click", function () { closeMenu(); off.classList.remove("hide"); });
+    off.addEventListener("click", function () { off.classList.add("hide"); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeMenu(); off.classList.add("hide"); } });
+
+    /* ================= ĐỒNG HỒ / BOOT ================= */
+    function tick() {
+      document.getElementById("clock").textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true });
+    }
+    tick(); setInterval(tick, 15000);
+
+    var boot = document.getElementById("boot");
+    function bootDone() { boot.classList.add("fade"); setTimeout(function () { boot.classList.add("hide"); }, 600); }
+    boot.addEventListener("click", bootDone);
+    setTimeout(bootDone, 1100);
+
+    window.addEventListener("resize", function () { Object.keys(wins).forEach(function (k) { if (wins[k].classList.contains("open") && !narrow()) clamp(wins[k]); }); });
+  </script>
+</body>
+</html>
