@@ -135,6 +135,9 @@
     .screen.fade { opacity: 0; transition: opacity .5s steps(5); pointer-events: none; }
     /* boot tự tắt bằng CSS thuần, không phụ thuộc JavaScript hay font */
     #boot { animation: bootout .4s steps(4) .7s forwards; }
+    #boot { color: #7fb8ff; }   /* màu chữ "starting up": xanh lam */
+    #off  { color: #ff9ecb; }   /* màu chữ ở màn hình shutdown: hồng */
+    .offgif { display: block; margin: 0 auto 18px; max-width: min(60vw, 320px); max-height: 50vh; height: auto; image-rendering: auto; }
     @keyframes bootout { to { opacity: 0; visibility: hidden; pointer-events: none; } }
     .blink { animation: blink 1s steps(2) infinite; }
     @keyframes blink { 50% { opacity: 0; } }
@@ -216,7 +219,7 @@
   </div><!-- /monitor -->
 
   <div class="screen" id="boot"><div>starting up<span class="blink">_</span></div></div>
-  <div class="screen hide" id="off"><div>it's now safe to turn off<br />your computer.<br /><br /><span class="blink" style="font-size:22px">(click anywhere to wake)</span></div></div>
+  <div class="screen hide" id="off"><div>   <img class="offgif" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjXPZc_zMDi8Y6MT-mZZx-1GiEsr0F2JQowUZa1Ua_DDGnuIF5tHDUaQudF5RBsSEmUQeozFfTURDACrdUNxyIu_EC-4wxFr7S5aZms0ylzsr3H8biLPaUakv2w4CtpLknnzuLngk3xQEbGh8fkRYbiZ2KGTXp_sBgXB9qdBK0cLW1dFtW0-lkfJnu5loU/s1600/_%20%2822%29.gif" alt="" />   take care of yourself    <br /><br /><span class="blink" style="font-size:22px">(click anywhere to wake)</span> </div></div>
 
   <script>
     /* ================= DỮ LIỆU =================
