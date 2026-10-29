@@ -418,24 +418,16 @@
     setTimeout(bootDone, 1100);
 
     window.addEventListener("resize", function () { Object.keys(wins).forEach(function (k) { if (wins[k].classList.contains("open") && !narrow()) clamp(wins[k]); }); });
-  /* ================= ÂM THANH CLICK ================= */
-var AC = window.AudioContext || window.webkitAudioContext, actx;
+ /* ================= ÂM THANH CLICK ================= */
+var snd = new Audio("click.mp3");
+snd.volume = 0.4;   /* 0 đến 1 */
+snd.preload = "auto";
 function clickSound() {
-  try {
-    actx = actx || new AC();
-    if (actx.state === "suspended") actx.resume();
-    var o = actx.createOscillator(), g = actx.createGain();
-    o.type = "square";                 /* square = tiếng retro, có thể đổi "triangle" cho dịu hơn */
-    o.frequency.value = 520;           /* cao độ: tăng = chói hơn, giảm = trầm hơn */
-    g.gain.setValueAtTime(0.06, actx.currentTime);   /* âm lượng */
-    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + 0.06);
-    o.connect(g); g.connect(actx.destination);
-    o.start(); o.stop(actx.currentTime + 0.07);
-  } catch (e) {}
+  try { snd.currentTime = 0; var p = snd.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
 }
 document.addEventListener("pointerdown", function (e) {
-  if (e.target.closest("button, a, .item, .icon, .titlebar")) clickSound();
-});
+  if (e.target.closest("button, a, .item, .icon, .titlebar, .task, .start, [role=menuitem], #off, #boot")) clickSound();
+}, true);
   </script>
 </body>
 </html>
