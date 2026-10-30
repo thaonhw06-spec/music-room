@@ -428,7 +428,7 @@
     window.addEventListener("resize", function () { Object.keys(wins).forEach(function (k) { if (wins[k].classList.contains("open") && !narrow()) clamp(wins[k]); }); });
  /* ================= ÂM THANH CLICK ================= */
 var snd = new Audio("click.mp3");
-snd.volume = 0.4;   /* 0 đến 1 */
+snd.volume = 0.8;   /* 0 đến 1 */
 snd.preload = "auto";
 function clickSound() {
   try { snd.currentTime = 0; var p = snd.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
