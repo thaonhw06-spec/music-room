@@ -162,6 +162,27 @@
       .clock { padding: 0 8px; }
       .grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 16px 10px; }
     }
+    /* ===== ID MAKER ===== */
+@font-face { font-family: "KiwiSoda"; src: url("KiwiSoda.ttf") format("truetype"); font-display: swap; }
+.icon[data-open="id"] { left: 3.5%; top: 55%; }
+.idwrap { display: grid; gap: 14px; grid-template-columns: 1fr; }
+.idform { display: grid; gap: 8px; align-content: start; }
+.idform label { display: grid; gap: 2px; font-size: 20px; color: var(--title-ink); }
+.idform label.chk { display: flex; align-items: center; gap: 8px; }
+.idform input[type=text], .idform input[type=date], .idform select { width: 100%; padding: 2px 8px; font: 22px var(--lcdfont); background: var(--lcd); color: var(--title-ink); border: 3px solid; border-color: var(--ink) var(--hi) var(--hi) var(--ink); border-radius: 0; }
+.idform input[type=file] { max-width: 100%; font: 20px var(--lcdfont); }
+.idform input[type=range] { width: 100%; accent-color: var(--olive); }
+.idprev canvas { display: block; width: 100%; height: auto; background: repeating-conic-gradient(#e9e0d6 0% 25%, #ddd3c8 0% 50%) 0 0 / 20px 20px; }
+.idbtns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.idbtns .btn { height: 36px; }
+@media (min-width: 721px) {
+  #win-id { width: min(880px, calc(100cqw - 100px)); height: min(620px, calc(100cqh - var(--bar) - 40px)); }
+  #win-id.max { width: auto; height: auto; }
+  .idwrap { grid-template-columns: 250px 1fr; }
+}
+@media (max-width: 720px) {
+  .icon[data-open="id"] { left: 56%; top: 8%; }
+}
   </style>
 </head>
 <body>
@@ -173,7 +194,9 @@
   <nav class="desktop" aria-label="Desktop">
     <button class="icon" data-open="music" type="button"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" /><span>music</span></button>
     <button class="icon" data-open="film" type="button"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" /><span>films</span></button>
+    <button class="icon" data-open="id" type="button"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" /><span>id_maker</span></button>
   </nav>
+    
 
   <!-- cửa sổ nhạc -->
   <section class="win" id="win-music" data-title="music_files" data-icon="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" aria-label="music_files" style="left:24%; top:6%;">
@@ -204,11 +227,56 @@
     <div class="content"><div class="grid" id="grid-film"></div></div>
     <div class="status" id="status-film">0 object(s)</div>
   </section>
-
+  <!-- cửa sổ làm thẻ -->
+<section class="win" id="win-id" data-title="id_maker" data-icon="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" aria-label="id_maker" style="left:16%; top:4%;">
+  <div class="titlebar">
+    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" />
+    <h2>id_maker</h2>
+    <button class="tb" data-act="min" aria-label="Minimize"><svg viewBox="0 0 14 14"><rect x="1" y="10" width="9" height="3" fill="#000"/></svg></button>
+    <button class="tb" data-act="max" aria-label="Maximize"><svg viewBox="0 0 14 14"><path d="M1 1h12v12H1z M3 4h8v7H3z" fill="#000" fill-rule="evenodd"/></svg></button>
+    <button class="tb" data-act="close" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M1 1h3v2h2v2h2V3h2V1h3v3h-2v2h-2v2h2v2h2v3h-3v-2h-2v-2H6v2H4v2H1v-3h2v-2h2V6H3V4H1z" fill="#000"/></svg></button>
+  </div>
+  <div class="addr"><div class="lcd">C:\make_my_id.exe</div></div>
+  <div class="content">
+    <div class="idwrap">
+      <div class="idform">
+        <label>name<input type="text" id="idName" maxlength="18" value="Stardust" /></label>
+        <label>birth<input type="date" id="idBirth" /></label>
+        <label>planet<input type="text" id="idPlanet" maxlength="16" value="Earth" /></label>
+        <label>slogan<input type="text" id="idSlogan" maxlength="26" value="stay soft" /></label>
+        <label>photo<input type="file" id="idPhoto" accept="image/*" /></label>
+        <label>zoom<input type="range" id="idZoom" min="100" max="300" value="100" /></label>
+        <label>move left / right<input type="range" id="idX" min="-100" max="100" value="0" /></label>
+        <label>move up / down<input type="range" id="idY" min="-100" max="100" value="0" /></label>
+        <label class="chk"><input type="checkbox" id="idHalf" checked /> halftone on photo</label>
+        <label>halftone strength<input type="range" id="idHalfAmt" min="0" max="100" value="45" /></label>
+        <label>colors
+          <select id="idPal">
+            <option value="sky">sky + pink</option>
+            <option value="peach">pink + sky</option>
+            <option value="olive">olive + cream</option>
+            <option value="lilac">lilac + pink</option>
+          </select>
+        </label>
+      </div>
+      <div class="idprev">
+        <canvas id="idCanvas" width="1040" height="660"></canvas>
+        <div class="idbtns">
+          <button class="btn" id="idDl" type="button">download.png</button>
+          <button class="btn" id="idNo" type="button">new no.</button>
+          <button class="btn" id="idReset" type="button">reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="status">font: kiwi soda by jeti (CC BY 4.0)</div>
+</section>
+    
   <!-- start menu -->
   <div class="menu" id="menu" role="menu">
     <button data-open="music" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" />music_files</button>
     <button data-open="film" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" />film_files</button>
+    <button data-open="id" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" />id_maker</button>
     <hr />
     <a href="https://cassie-loveletters.blogspot.com/" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" style="filter:grayscale(1)" />return to blog</a>
     <button id="shutdown" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" style="filter:grayscale(1) brightness(.6)" />shut down...</button>
@@ -312,7 +380,7 @@
 
 
     /* ================= CỬA SỔ ================= */
-    var wins = { music: document.getElementById("win-music"), film: document.getElementById("win-film") };
+    var wins = { music: document.getElementById("win-music"), film: document.getElementById("win-film"), id: document.getElementById("win-id") };
     var tasks = document.getElementById("tasks"), z = 10, current = null;
     var narrow = function () { return window.matchMedia("(max-width: 720px)").matches; };
 
@@ -528,7 +596,187 @@ document.addEventListener("pointerdown", function (e) {
   window.addEventListener("resize", function () {
     if (narrow()) list.forEach(function (o) { o.style.left = ""; o.style.top = ""; });
   });
-})();   
+})(); 
+  /* ================= ID CARD MAKER ================= */
+(function () {
+  var cv = document.getElementById("idCanvas"), ctx = cv.getContext("2d");
+  var $ = function (id) { return document.getElementById(id); };
+  var F_BIG = '"KiwiSoda","Pixelify Sans",monospace';
+  var F_SM = '"VT323","Courier New",monospace';
+  var PAL = {
+    sky:   { top: "#46c8f5", mid: "#a6e6fb", bot: "#ffffff", pillA: "#ffffff", pillB: "#f8bddd", accent: "#f7a3d2", dot: "#ff7fb7", ink: "#1b1b24" },
+    peach: { top: "#ff93c3", mid: "#ffd0e4", bot: "#ffffff", pillA: "#ffffff", pillB: "#c6ecfb", accent: "#8fd3f0", dot: "#ff6fa8", ink: "#1b1b24" },
+    olive: { top: "#9a9548", mid: "#d6d2a0", bot: "#fbf7e4", pillA: "#ffffff", pillB: "#e4dcab", accent: "#c9bf7a", dot: "#e08fae", ink: "#2b2814" },
+    lilac: { top: "#b79bf2", mid: "#dccffb", bot: "#ffffff", pillA: "#ffffff", pillB: "#ffc4de", accent: "#ffb0d2", dot: "#ff7fb7", ink: "#1b1b24" }
+  };
+  var photo = null, cardNo = "";
+
+  function todayNo() {
+    var d = new Date(), m = d.getMonth() + 1, day = d.getDate();
+    return "" + d.getFullYear() + (m < 10 ? "0" : "") + m + (day < 10 ? "0" : "") + day;
+  }
+  cardNo = todayNo();
+
+  function rr(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function fitFont(text, family, maxW, size, min) {
+    while (size > min) {
+      ctx.font = size + "px " + family;
+      if (ctx.measureText(text).width <= maxW) break;
+      size -= 2;
+    }
+    ctx.font = size + "px " + family;
+    return size;
+  }
+  function halftone(x, y, w, h, color, amt) {
+    var step = 11, maxR = step * 0.66;
+    ctx.save();
+    var wash = ctx.createLinearGradient(0, y, 0, y + h);
+    wash.addColorStop(0, color); wash.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.globalAlpha = amt * 0.35; ctx.fillStyle = wash; ctx.fillRect(x, y, w, h);
+    ctx.globalAlpha = amt; ctx.fillStyle = color;
+    for (var row = 0, py = y; py < y + h + step; row++, py += step * 0.866) {
+      var t = 1 - Math.min(Math.max((py - y) / h, 0), 1);
+      var r = maxR * Math.pow(t, 0.85);
+      if (r < 0.7) continue;
+      for (var px = x - (row % 2 ? 0 : step / 2); px < x + w + step; px += step) {
+        ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function draw() {
+    var p = PAL[$("idPal").value] || PAL.sky;
+    var name = ($("idName").value || "").trim() || "your name";
+    var planet = ($("idPlanet").value || "").trim() || "-";
+    var slogan = ($("idSlogan").value || "").trim().toUpperCase();
+    var bv = $("idBirth").value;
+    var birth = bv ? bv.replace(/-/g, "/") : "----/--/--";
+
+    var W = cv.width, H = cv.height;
+    var cx = 24, cy = 24, cw = 970, ch = 590;
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineJoin = "round";
+
+    /* bóng + thân thẻ */
+    rr(cx + 9, cy + 9, cw, ch, 46); ctx.fillStyle = "rgba(0,0,0,.28)"; ctx.fill();
+    var g = ctx.createLinearGradient(0, cy, 0, cy + ch);
+    g.addColorStop(0, p.top); g.addColorStop(0.5, p.mid); g.addColorStop(1, p.bot);
+    rr(cx, cy, cw, ch, 46); ctx.fillStyle = g; ctx.fill();
+    ctx.lineWidth = 5; ctx.strokeStyle = p.ink; ctx.stroke();
+
+    /* tên lớn */
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    fitFont(name, F_BIG, cw - 90, 150, 40);
+    var tx = cx + cw / 2, ty = cy + 118;
+    ctx.shadowColor = p.accent; ctx.shadowOffsetX = 7; ctx.shadowOffsetY = 7; ctx.shadowBlur = 0;
+    ctx.lineWidth = 14; ctx.strokeStyle = p.ink; ctx.strokeText(name, tx, ty);
+    ctx.shadowColor = "transparent"; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+    ctx.fillStyle = "#fff"; ctx.fillText(name, tx, ty);
+
+    /* avatar tròn */
+    var ax = cx + 205, ay = cy + 372, ar = 138;
+    ctx.beginPath(); ctx.arc(ax, ay, ar + 12, 0, Math.PI * 2);
+    ctx.fillStyle = p.accent; ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = p.ink; ctx.stroke();
+    ctx.save();
+    ctx.beginPath(); ctx.arc(ax, ay, ar, 0, Math.PI * 2); ctx.clip();
+    if (photo) {
+      var zoom = +$("idZoom").value / 100;
+      var s = Math.max(2 * ar / photo.width, 2 * ar / photo.height) * zoom;
+      var dw = photo.width * s, dh = photo.height * s;
+      var ox = (+$("idX").value / 100) * Math.max(dw - 2 * ar, 0) / 2;
+      var oy = (+$("idY").value / 100) * Math.max(dh - 2 * ar, 0) / 2;
+      ctx.drawImage(photo, ax - dw / 2 + ox, ay - dh / 2 + oy, dw, dh);
+    } else {
+      ctx.fillStyle = p.pillB; ctx.fillRect(ax - ar, ay - ar, ar * 2, ar * 2);
+      ctx.fillStyle = p.ink; ctx.font = "120px " + F_BIG;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("?", ax, ay + 6);
+    }
+    if ($("idHalf").checked) halftone(ax - ar, ay - ar, ar * 2, ar * 2, p.dot, +$("idHalfAmt").value / 100);
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(ax, ay, ar, 0, Math.PI * 2); ctx.lineWidth = 5; ctx.strokeStyle = p.ink; ctx.stroke();
+
+    /* ba ô thông tin */
+    var px0 = cx + 410, pw = cw - 410 - 48, ph = 84, gap = 20, py0 = cy + 232;
+    var rows = [["NAME", name], ["BIRTH", birth], ["PLANET", planet]];
+    rows.forEach(function (r, i) {
+      var y = py0 + i * (ph + gap);
+      var pg = ctx.createLinearGradient(0, y, 0, y + ph);
+      pg.addColorStop(0, p.pillA); pg.addColorStop(1, p.pillB);
+      rr(px0, y, pw, ph, ph / 2); ctx.fillStyle = pg; ctx.fill();
+      ctx.lineWidth = 4; ctx.strokeStyle = p.ink; ctx.stroke();
+      ctx.textBaseline = "middle"; ctx.fillStyle = p.ink;
+      ctx.textAlign = "left"; ctx.font = "28px " + F_SM; ctx.fillText(r[0], px0 + 32, y + ph / 2 + 2);
+      ctx.textAlign = "right"; fitFont(r[1], F_BIG, pw - 64 - 150, 36, 18);
+      ctx.fillText(r[1], px0 + pw - 32, y + ph / 2 + 2);
+    });
+
+    /* chân thẻ */
+    ctx.fillStyle = p.ink; ctx.textBaseline = "middle";
+    ctx.textAlign = "left"; ctx.font = "24px " + F_SM;
+    ctx.fillText("IDENTIFICATION CARD", cx + 60, cy + 548);
+    ctx.fillText("NO. " + cardNo, cx + 60, cy + 572);
+    ctx.textAlign = "right"; fitFont(slogan, F_SM, 330, 24, 14);
+    ctx.fillText(slogan, cx + cw - 60, cy + 560);
+  }
+
+  /* gắn sự kiện */
+  ["idName", "idBirth", "idPlanet", "idSlogan", "idPal", "idZoom", "idX", "idY", "idHalf", "idHalfAmt"].forEach(function (id) {
+    $(id).addEventListener("input", draw);
+    $(id).addEventListener("change", draw);
+  });
+
+  $("idPhoto").addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    var url = URL.createObjectURL(f), im = new Image();
+    im.onload = function () {
+      photo = im; $("idZoom").value = 100; $("idX").value = 0; $("idY").value = 0;
+      draw(); URL.revokeObjectURL(url);
+    };
+    im.onerror = function () { URL.revokeObjectURL(url); };
+    im.src = url;
+  });
+
+  $("idNo").addEventListener("click", function () {
+    cardNo = String(Math.floor(10000000 + Math.random() * 89999999));
+    draw();
+  });
+
+  $("idReset").addEventListener("click", function () {
+    $("idName").value = "Stardust"; $("idBirth").value = ""; $("idPlanet").value = "Earth";
+    $("idSlogan").value = "stay soft"; $("idPhoto").value = ""; $("idPal").value = "sky";
+    $("idZoom").value = 100; $("idX").value = 0; $("idY").value = 0;
+    $("idHalf").checked = true; $("idHalfAmt").value = 45;
+    photo = null; cardNo = todayNo(); draw();
+  });
+
+  $("idDl").addEventListener("click", function () {
+    draw();
+    cv.toBlob(function (b) {
+      if (!b) return;
+      var slug = ($("idName").value || "card").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "card";
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(b); a.download = "id-card-" + slug + ".png";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    }, "image/png");
+  });
+
+  /* vẽ lần đầu, rồi vẽ lại khi font đã tải xong */
+  draw();
+  if (document.fonts && document.fonts.load) {
+    Promise.all([document.fonts.load('40px "KiwiSoda"'), document.fonts.load('24px "VT323"')]).then(draw, draw);
+  }
+})();  
   </script>
 </body>
 </html>
