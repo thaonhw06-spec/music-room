@@ -75,6 +75,7 @@
     .icon.sel span, .icon:focus-visible span { background: var(--olive); outline: 1px dotted var(--lcd); text-shadow: none; }
     .icon.sel img, .icon:focus-visible img { filter: sepia(1) saturate(2) hue-rotate(20deg) brightness(.8); }
     .icon:focus { outline: none; }
+    .marquee { position: absolute; display: none; pointer-events: none; z-index: 5; border: 1px dotted var(--lcd); background: rgba(252, 255, 188, .18); }
 
     /* ---------- cửa sổ ---------- */
     .win { position: fixed; display: none; flex-direction: column; width: min(600px, calc(100cqw - 230px)); height: min(430px, calc(100cqh - var(--bar) - 70px)); background: var(--body); border: 2px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); box-shadow: none; }
@@ -436,6 +437,98 @@ function clickSound() {
 document.addEventListener("pointerdown", function (e) {
   if (e.target.closest("button, a, .item, .icon, .titlebar, .task, .start, [role=menuitem], #off, #boot")) clickSound();
 }, true);
+ /* ================= KÉO ICON + KHUNG CHỌN (chỉ máy tính) ================= */
+(function () {
+  var desk = document.querySelector(".desktop");
+  var list = Array.prototype.slice.call(desk.querySelectorAll(".icon"));
+  var skipClick = false;
+  function clamp(v, a, b) { return Math.max(a, Math.min(v, b)); }
+  list.forEach(function (o) { var im = o.querySelector("img"); if (im) im.draggable = false; });
+
+  /* 1. Kéo icon (đang chọn nhiều icon thì kéo cả nhóm) */
+  list.forEach(function (ic) {
+    var d = null;
+    ic.addEventListener("pointerdown", function (e) {
+      if (e.pointerType !== "mouse" || e.button !== 0 || narrow()) return;
+      if (!ic.classList.contains("sel")) {
+        list.forEach(function (o) { o.classList.remove("sel"); });
+        ic.classList.add("sel");
+      }
+      var r = desk.getBoundingClientRect();
+      var g = list.filter(function (o) { return o.classList.contains("sel"); }).map(function (o) {
+        return { el: o, x: o.offsetLeft, y: o.offsetTop };
+      });
+      var b = { minX: -Infinity, maxX: Infinity, minY: -Infinity, maxY: Infinity };
+      g.forEach(function (i) {
+        b.minX = Math.max(b.minX, -i.x);
+        b.maxX = Math.min(b.maxX, r.width - i.el.offsetWidth - i.x);
+        b.minY = Math.max(b.minY, -i.y);
+        b.maxY = Math.min(b.maxY, r.height - i.el.offsetHeight - i.y);
+      });
+      d = { sx: e.clientX, sy: e.clientY, moved: false, g: g, b: b, w: r.width, h: r.height };
+      ic.setPointerCapture(e.pointerId);
+    });
+    ic.addEventListener("pointermove", function (e) {
+      if (!d) return;
+      var dx = e.clientX - d.sx, dy = e.clientY - d.sy;
+      if (!d.moved && Math.abs(dx) + Math.abs(dy) < 5) return;
+      d.moved = true;
+      dx = clamp(dx, d.b.minX, d.b.maxX);
+      dy = clamp(dy, d.b.minY, d.b.maxY);
+      d.g.forEach(function (i) {
+        i.el.style.left = ((i.x + dx) / d.w * 100) + "%";
+        i.el.style.top = ((i.y + dy) / d.h * 100) + "%";
+      });
+    });
+    function end() {
+      if (d && d.moved) { skipClick = true; setTimeout(function () { skipClick = false; }, 300); }
+      d = null;
+    }
+    ic.addEventListener("pointerup", end);
+    ic.addEventListener("pointercancel", end);
+  });
+
+  /* thả chuột sau khi kéo thì không tính là click (tránh mất vùng chọn) */
+  desk.addEventListener("click", function (e) {
+    if (skipClick) { skipClick = false; e.stopPropagation(); e.preventDefault(); }
+  }, true);
+
+  /* 2. Khung chọn nhiều icon khi kéo chuột trên nền */
+  var box = document.createElement("div");
+  box.className = "marquee";
+  desk.appendChild(box);
+  var m = null;
+  desk.addEventListener("pointerdown", function (e) {
+    if (e.target !== desk || e.pointerType !== "mouse" || e.button !== 0 || narrow()) return;
+    var r = desk.getBoundingClientRect();
+    m = { x: e.clientX - r.left, y: e.clientY - r.top };
+    list.forEach(function (o) { o.classList.remove("sel"); });
+    desk.setPointerCapture(e.pointerId);
+  });
+  desk.addEventListener("pointermove", function (e) {
+    if (!m) return;
+    var r = desk.getBoundingClientRect();
+    var x2 = clamp(e.clientX - r.left, 0, r.width), y2 = clamp(e.clientY - r.top, 0, r.height);
+    var l = Math.min(m.x, x2), t = Math.min(m.y, y2), w = Math.abs(x2 - m.x), h = Math.abs(y2 - m.y);
+    if (w < 4 && h < 4) return;
+    box.style.display = "block";
+    box.style.left = l + "px"; box.style.top = t + "px";
+    box.style.width = w + "px"; box.style.height = h + "px";
+    list.forEach(function (o) {
+      var hit = o.offsetLeft < l + w && o.offsetLeft + o.offsetWidth > l &&
+                o.offsetTop < t + h && o.offsetTop + o.offsetHeight > t;
+      o.classList.toggle("sel", hit);
+    });
+  });
+  function endBox() { m = null; box.style.display = "none"; }
+  desk.addEventListener("pointerup", endBox);
+  desk.addEventListener("pointercancel", endBox);
+
+  /* thu nhỏ trình duyệt xuống cỡ điện thoại thì trả icon về vị trí mặc định */
+  window.addEventListener("resize", function () {
+    if (narrow()) list.forEach(function (o) { o.style.left = ""; o.style.top = ""; });
+  });
+})();   
   </script>
 </body>
 </html>
