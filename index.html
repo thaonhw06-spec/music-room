@@ -636,7 +636,7 @@ document.addEventListener("pointerdown", function (e) {
     return size;
   }
   function halftone(x, y, w, h, color, amt) {
-    var step = 11, maxR = step * 0.66;
+    var step = 7, maxR = step * 0.55;
     ctx.save();
     var wash = ctx.createLinearGradient(0, y, 0, y + h);
     wash.addColorStop(0, color); wash.addColorStop(1, "rgba(255,255,255,0)");
