@@ -250,6 +250,8 @@
         <label>move up / down<input type="range" id="idY" min="-100" max="100" value="0" /></label>
         <label class="chk"><input type="checkbox" id="idHalf" checked /> halftone on photo</label>
         <label>halftone strength<input type="range" id="idHalfAmt" min="0" max="100" value="45" /></label>
+       <label class="chk"><input type="checkbox" id="idGrain" checked /> grain on card</label>
+       <label>grain strength<input type="range" id="idGrainAmt" min="0" max="100" value="40" /></label>
         <label>colors
           <select id="idPal">
             <option value="sky">sky + pink</option>
@@ -610,6 +612,22 @@ document.addEventListener("pointerdown", function (e) {
     lilac: { top: "#b79bf2", mid: "#dccffb", bot: "#ffffff", pillA: "#ffffff", pillB: "#ffc4de", accent: "#ffb0d2", dot: "#ff7fb7", ink: "#1b1b24" }
   };
   var photo = null, cardNo = "";
+  var grainCv = null;
+function makeGrain(w, h) {
+  var c = document.createElement("canvas"); c.width = w; c.height = h;
+  var g = c.getContext("2d"), img = g.createImageData(w, h), d = img.data;
+  for (var y = 0; y < h; y++) {
+    var t = y / h;
+    var band = Math.exp(-Math.pow((t - 0.6) / 0.25, 2));   /* 0.6 = vị trí vùng chuyển màu, 0.25 = độ rộng của vùng */
+    for (var x = 0; x < w; x++) {
+      var i = (y * w + x) * 4, v = Math.random() < 0.5 ? 0 : 255;
+      d[i] = d[i + 1] = d[i + 2] = v;
+      d[i + 3] = Math.random() * 255 * band;
+    }
+  }
+  g.putImageData(img, 0, 0);
+  return c;
+}
 
   function todayNo() {
     var d = new Date(), m = d.getMonth() + 1, day = d.getDate();
@@ -671,7 +689,16 @@ document.addEventListener("pointerdown", function (e) {
     var g = ctx.createLinearGradient(0, cy, 0, cy + ch);
     g.addColorStop(0, p.top); g.addColorStop(0.5, p.mid); g.addColorStop(1, p.bot);
     rr(cx, cy, cw, ch, 46); ctx.fillStyle = g; ctx.fill();
-    ctx.lineWidth = 5; ctx.strokeStyle = p.ink; ctx.stroke();
+if ($("idGrain").checked) {
+  grainCv = grainCv || makeGrain(cw, ch);
+  ctx.save();
+  rr(cx, cy, cw, ch, 46); ctx.clip();
+  ctx.globalAlpha = +$("idGrainAmt").value / 100;
+  ctx.drawImage(grainCv, cx, cy);
+  ctx.restore();
+}
+rr(cx, cy, cw, ch, 46);
+ctx.lineWidth = 5; ctx.strokeStyle = p.ink; ctx.stroke();
 
     /* tên lớn */
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -729,7 +756,7 @@ document.addEventListener("pointerdown", function (e) {
   }
 
   /* gắn sự kiện */
-  ["idName", "idBirth", "idPlanet", "idSlogan", "idPal", "idZoom", "idX", "idY", "idHalf", "idHalfAmt"].forEach(function (id) {
+  ["idName", "idBirth", "idPlanet", "idSlogan", "idPal", "idZoom", "idX", "idY", "idHalf", "idHalfAmt", "idGrain", "idGrainAmt"].forEach(function (id) {
     $(id).addEventListener("input", draw);
     $(id).addEventListener("change", draw);
   });
@@ -756,6 +783,7 @@ document.addEventListener("pointerdown", function (e) {
     $("idSlogan").value = "stay soft"; $("idPhoto").value = ""; $("idPal").value = "sky";
     $("idZoom").value = 100; $("idX").value = 0; $("idY").value = 0;
     $("idHalf").checked = true; $("idHalfAmt").value = 45;
+    $("idGrain").checked = true; $("idGrainAmt").value = 40;
     photo = null; cardNo = todayNo(); draw();
   });
 
