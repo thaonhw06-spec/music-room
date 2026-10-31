@@ -183,6 +183,31 @@
 @media (max-width: 720px) {
   .icon[data-open="id"] { left: 56%; top: 8%; }
 }
+/* ===== MINI PLAYER ===== */
+.icon[data-open="play"] { left: 13%; top: 54%; }
+.icon[data-open="play"] img { object-fit: cover; image-rendering: auto; }
+#win-play { width: 300px; height: auto; }
+#win-play .titlebar { height: 28px; margin: 4px; padding: 0 4px 0 6px; gap: 6px; }
+#win-play .titlebar img { width: 18px; height: 18px; object-fit: cover; image-rendering: auto; }
+#win-play .titlebar h2 { font-size: 19px; }
+#win-play .tb { width: 22px; height: 20px; border-width: 2px; box-shadow: 1px 1px 0 var(--ink); }
+#win-play .tb svg { width: 10px; height: 10px; }
+#win-play .tb[data-act="max"] { display: none; }
+.pframe { margin: 0 4px; background: #000; border: 3px solid; border-color: var(--ink) var(--hi) var(--hi) var(--ink); line-height: 0; min-height: 120px; }
+.pframe img, .pframe canvas { display: block; width: 100%; height: auto; image-rendering: auto; }
+.pframe canvas { display: none; }
+.pbar { display: flex; align-items: center; gap: 8px; margin: 4px; padding: 0 2px; }
+.pbtn { width: 26px; height: 22px; padding: 0; flex: none; cursor: pointer; font: 600 14px/1 var(--px); color: var(--ink); background: var(--body); border: 2px solid; border-color: var(--hi) var(--ink) var(--ink) var(--hi); }
+.pbtn:active { border-color: var(--ink) var(--hi) var(--hi) var(--ink); }
+.ptrack { flex: 1; height: 10px; overflow: hidden; background: var(--lcd); border: 2px solid; border-color: var(--ink) var(--hi) var(--hi) var(--ink); }
+.ptrack i { display: block; height: 100%; width: 30%; background: var(--olive); animation: pslide 2.4s linear infinite; }
+#win-play.paused .ptrack i { animation-play-state: paused; }
+@keyframes pslide { from { margin-left: -30%; } to { margin-left: 100%; } }
+@media (prefers-reduced-motion: reduce) { .ptrack i { animation: none; width: 100%; } }
+@media (max-width: 720px) {
+  .icon[data-open="play"] { left: 56%; top: 20%; }
+  #win-play, #win-play.max { inset: auto 14px calc(var(--bar) + 20px) auto !important; width: min(300px, calc(100vw - 28px)); }
+}    
   </style>
 </head>
 <body>
@@ -195,6 +220,7 @@
     <button class="icon" data-open="music" type="button"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" /><span>music</span></button>
     <button class="icon" data-open="film" type="button"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" /><span>films</span></button>
     <button class="icon" data-open="id" type="button"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5pLWE4TX7BSR-CXbVUjgoyu5S3ACn_Kv-DkhF9Tx7ZkWlJ4FJ0KWetLGMatvmCv8WLaoWZDM58Hs8xWOvTzTsGp7Mu92shBXFSaak-vk4vtqdirHrYHqNoHycj3kZY2298gW-JcXjeIxaE7hKsX-zHvBBkfFdupzSnhK8cKMrjt2aOljNo1rXYYRoQYw/s1600/directory_closed-4.png" alt="" /><span>id_maker</span></button>
+    <button class="icon" data-open="play" type="button"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiP_IKrvTpy5EeurY-Fn7LEr1hBxbnv1G1jaQIDVAVIwZJILc7pa04NnrrM2wpYQjeOl3jkEg-8-ddh6rcU4OexqKon-k8WGBu_4T3muWpb9rZbUWBpSoMNjGJ39LrbB_AX2bKrSbN9Mw-ZCG0eJ4gb7vT6FkgHzxpBDYoyKK7B1ngm5QxyX7NKegaYsdU/s1600/lacroixdaisy9.png" alt="" /><span>4laska1</span></button> 
   </nav>
     
 
@@ -273,7 +299,23 @@
   </div>
   <div class="status">font: kiwi soda by jeti (CC BY 4.0)</div>
 </section>
-    
+ <!-- mini player -->
+<section class="win" id="win-play" data-title="4laska1.gif" data-icon="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYB0Uyf0EaesyLUUl2hofIaVKcAp-DCn8drlFrW5SmoZEYOVSRtLra6AiVl5ow7fUM_UB0PR1z8cgJDLzOL58gxUv-hOqW2xKRbGbeTFTF1tQSxG4g6RkdLlD1Xkn73Mt_ihjhlRw0KQbWK89afB3N_QVOkf5WYKzPXjd-KLY7wtTE4xGpGLRgOL53evI/s1600/ALASKA%20GIF.gif" aria-label="4laska1.gif" style="left:62%; top:12%;">
+  <div class="titlebar">
+    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYB0Uyf0EaesyLUUl2hofIaVKcAp-DCn8drlFrW5SmoZEYOVSRtLra6AiVl5ow7fUM_UB0PR1z8cgJDLzOL58gxUv-hOqW2xKRbGbeTFTF1tQSxG4g6RkdLlD1Xkn73Mt_ihjhlRw0KQbWK89afB3N_QVOkf5WYKzPXjd-KLY7wtTE4xGpGLRgOL53evI/s1600/ALASKA%20GIF.gif" alt="" />
+    <h2>4laska1.gif</h2>
+    <button class="tb" data-act="min" aria-label="Minimize"><svg viewBox="0 0 14 14"><rect x="1" y="10" width="9" height="3" fill="#000"/></svg></button>
+    <button class="tb" data-act="close" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M1 1h3v2h2v2h2V3h2V1h3v3h-2v2h-2v2h2v2h2v3h-3v-2h-2v-2H6v2H4v2H1v-3h2v-2h2V6H3V4H1z" fill="#000"/></svg></button>
+  </div>
+  <div class="pframe">
+    <img id="pgif" data-src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYB0Uyf0EaesyLUUl2hofIaVKcAp-DCn8drlFrW5SmoZEYOVSRtLra6AiVl5ow7fUM_UB0PR1z8cgJDLzOL58gxUv-hOqW2xKRbGbeTFTF1tQSxG4g6RkdLlD1Xkn73Mt_ihjhlRw0KQbWK89afB3N_QVOkf5WYKzPXjd-KLY7wtTE4xGpGLRgOL53evI/s1600/ALASKA%20GIF.gif" alt="alaska" referrerpolicy="no-referrer" />
+    <canvas id="pfrz"></canvas>
+  </div>
+  <div class="pbar">
+    <button class="pbtn" id="pbtn" type="button" aria-label="Pause">II</button>
+    <div class="ptrack"><i></i></div>
+  </div>
+</section>   
   <!-- start menu -->
   <div class="menu" id="menu" role="menu">
     <button data-open="music" role="menuitem"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghKCXvvqHboJEios2Mk_gSdWU9D99lWRGGfazPdc46OoF9ua3WuHEo4IQ-_YfcDpf0o-BzAMtm5qVOeVoXYdlshfZMwIY68TZgkFE8fcIy3jziEkGf-xnrI55-Q8gd1vSdkTtP3WqeBzGP4sMeXkLL9GuXRN3ok5dTkC8Cu1VH8kHNXOpE1SCU3XSQJsU/s1600/cd_drive-2.png" alt="" />music_files</button>
@@ -382,7 +424,7 @@
 
 
     /* ================= CỬA SỔ ================= */
-    var wins = { music: document.getElementById("win-music"), film: document.getElementById("win-film"), id: document.getElementById("win-id") };
+    var wins = { music: document.getElementById("win-music"), film: document.getElementById("win-film"), id: document.getElementById("win-id"), play: document.getElementById("win-play") };
     var tasks = document.getElementById("tasks"), z = 10, current = null;
     var narrow = function () { return window.matchMedia("(max-width: 720px)").matches; };
 
@@ -804,6 +846,37 @@ ctx.lineWidth = 5; ctx.strokeStyle = p.ink; ctx.stroke();
   if (document.fonts && document.fonts.load) {
     Promise.all([document.fonts.load('40px "KiwiSoda"'), document.fonts.load('24px "VT323"')]).then(draw, draw);
   }
+})(); 
+  /* ================= MINI PLAYER (1 gif) ================= */
+(function () {
+  var img = document.getElementById("pgif"), cv = document.getElementById("pfrz");
+  var btn = document.getElementById("pbtn"), win = document.getElementById("win-play");
+  var playing = true;
+
+  /* chỉ tải gif khi mở lần đầu cho nhẹ trang */
+  function load() { if (!img.src) img.src = img.dataset.src; }
+  document.querySelectorAll('[data-open="play"]').forEach(function (b) {
+    b.addEventListener("click", load, { once: true });
+  });
+
+  function setPlay(p) {
+    playing = p;
+    win.classList.toggle("paused", !p);
+    btn.textContent = p ? "II" : ">";
+    btn.setAttribute("aria-label", p ? "Pause" : "Play");
+    if (p) {
+      cv.style.display = "none"; img.style.display = "block";
+    } else {
+      try {
+        cv.width = img.naturalWidth || 300; cv.height = img.naturalHeight || 200;
+        cv.getContext("2d").drawImage(img, 0, 0);
+        img.style.display = "none"; cv.style.display = "block";
+      } catch (e) { playing = true; }
+    }
+  }
+  btn.addEventListener("click", function () { setPlay(!playing); });
+  img.addEventListener("click", function () { setPlay(!playing); });
+  cv.addEventListener("click", function () { setPlay(true); });
 })();  
   </script>
 </body>
